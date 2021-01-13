@@ -1,0 +1,27 @@
+# This workflow defines a couple of jobs to run in the frame of the automatic
+# continuous integration (ACI)
+
+name: Automatic Continuous Integration (ACI)
+
+# Controls when the action will run. Triggers the workflow on push events
+on: [push]
+
+# A workflow is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    name: Compilation
+    steps:
+      # Clone the repository using the "checkout" GH action.
+      - name: Checkout
+        uses: actions/checkout@master
+      # Compile the source files using the "compile" user-defined action.
+      - name: Compile
+        id: compile
+        uses: rabd/actions/compile@main
+      # Log compilation result using the output from the "compile" step.
+      - name: Log
+        if: failure()
+        run: |
+          cat ${{ steps.compile.outputs.compile-result }}
+          exit 1
